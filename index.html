@@ -5,6 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualization Accessibility Study</title>
+    <script>
+        // #region agent log
+        (function () {
+            function send(payload) {
+                fetch("http://127.0.0.1:7398/ingest/4b8dde08-513d-4314-a6cf-99c94534d9e5", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "79fe00" },
+                    body: JSON.stringify(
+                        Object.assign({ sessionId: "79fe00", timestamp: Date.now() }, payload)
+                    ),
+                }).catch(function () {});
+            }
+            var loc = location.href;
+            var path = location.pathname;
+            var resolved = new URL("style.css", location.href).href;
+            send({
+                hypothesisId: "H1",
+                location: "index.html:head",
+                message: "stylesheet URL resolution",
+                data: { locationHref: loc, pathname: path, resolvedStyleCss: resolved },
+            });
+            fetch(resolved, { method: "HEAD", mode: "cors" })
+                .then(function (r) {
+                    send({
+                        hypothesisId: "H4",
+                        location: "index.html:head",
+                        message: "HEAD style.css response",
+                        data: { status: r.status, ok: r.ok, resolved: resolved },
+                    });
+                })
+                .catch(function (e) {
+                    send({
+                        hypothesisId: "H5",
+                        location: "index.html:head",
+                        message: "HEAD style.css error",
+                        data: { error: String(e), resolved: resolved },
+                    });
+                });
+        })();
+        // #endregion
+    </script>
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
