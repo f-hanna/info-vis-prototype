@@ -1,0 +1,61 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    overflow: hidden; /* Prevents scrolling */
+}
+#experiment-container {
+    width: 800px;
+    max-width: 95vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+#task-instructions {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+#viz-container {
+    width: 500px;
+    height: 350px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+/* Normal vs Obscured Conditions */
+.obscured-vision {
+    filter: blur(2px) brightness(0.8) contrast(0.7); 
+}
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.response-buttons button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.likert-container {
+    margin-top: 20px;
+    text-align: center;
+    display: none; /* Hidden until answer is selected */
+}
+.likert-scale {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
