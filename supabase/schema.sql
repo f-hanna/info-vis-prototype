@@ -66,3 +66,5 @@ grant select on table public.study_sessions to anon;
 grant insert on table public.study_sessions to anon;
 grant insert on table public.study_trials to anon;
 grant update on table public.study_sessions to anon;
+
+notify pgrst, 'reload schema';

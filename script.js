@@ -413,11 +413,12 @@ async function finishStudy() {
     .select("user_number")
     .single();
 
-  const rawUserNumber = sessionRow?.user_number;
+  const sessionRecord = Array.isArray(sessionRow) ? sessionRow[0] : sessionRow;
+  const rawUserNumber = sessionRecord?.user_number;
   const userNumber =
-    typeof rawUserNumber === "number"
-      ? rawUserNumber
-      : typeof rawUserNumber === "string"
+    typeof rawUserNumber === "number" && Number.isFinite(rawUserNumber)
+      ? Math.trunc(rawUserNumber)
+      : typeof rawUserNumber === "string" && rawUserNumber.trim() !== ""
         ? parseInt(rawUserNumber, 10)
         : NaN;
 
@@ -426,15 +427,15 @@ async function finishStudy() {
     completedRowsLen: completedRows.length,
     sessionErrCode: sessionErr?.code ?? null,
     sessionErrMessage: sessionErr?.message ?? null,
-    sessionRowKeys: sessionRow ? Object.keys(sessionRow) : null,
+    sessionRowKeys: sessionRecord ? Object.keys(sessionRecord) : null,
     userNumberRaw: rawUserNumber,
-    userNumberType: sessionRow != null ? typeof rawUserNumber : null,
+    userNumberType: sessionRecord != null ? typeof rawUserNumber : null,
     userNumberCoerced: userNumber,
     coercedOk: Number.isFinite(userNumber),
   });
   // #endregion
 
-  if (sessionErr || sessionRow == null || !Number.isFinite(userNumber)) {
+  if (sessionErr || sessionRecord == null || !Number.isFinite(userNumber)) {
     statusEl.textContent =
       "We could not save your session. If you are the researcher, check the database and config.";
     statusEl.classList.remove("hidden");
@@ -472,8 +473,13 @@ async function finishStudy() {
   // #endregion
 
   if (trialsErr) {
-    statusEl.textContent =
-      "Session started but trials failed to save. The researcher should check RLS and table columns.";
+    const isUserNumberNull =
+      trialsErr.code === "23502" &&
+      typeof trialsErr.message === "string" &&
+      trialsErr.message.includes("user_number");
+    statusEl.textContent = isUserNumberNull
+      ? "Trials failed to save: the API may be using an old table schema. In Supabase SQL Editor run: NOTIFY pgrst, 'reload schema'; (see supabase/reload_postgrest_schema.sql), then try again."
+      : "Session started but trials failed to save. The researcher should check RLS and table columns.";
     statusEl.classList.remove("hidden");
     console.error(trialsErr);
     return;

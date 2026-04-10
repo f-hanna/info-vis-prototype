@@ -75,3 +75,6 @@ create policy "study_sessions_anon_select"
   using (true);
 
 grant select on table public.study_sessions to anon;
+
+-- Refresh PostgREST so new columns (e.g. study_trials.user_number) are accepted on insert.
+notify pgrst, 'reload schema';
