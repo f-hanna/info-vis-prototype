@@ -5,46 +5,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualization Accessibility Study</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="style
-    .css"></script>
-
 </head>
 
 <body>
-
-    <div id="experiment-container">
-        <div id="task-instructions">
-            <strong>Task:</strong> Which category has the highest value?
+    <div id="app">
+        <div id="screen-intro" class="screen" aria-live="polite">
+            <div id="experiment-container">
+                <h1 class="study-title">Visualization study</h1>
+                <p class="intro-copy">
+                    You will complete <strong>8 short tasks</strong> with charts on screen.
+                    For each task, choose your answer, then rate how difficult it felt.
+                    You will <strong>not</strong> see your speed or accuracy until the study is over.
+                </p>
+                <p class="intro-copy muted">Please respond as quickly and accurately as you can.</p>
+                <button type="button" class="btn-primary" id="btn-start">Start</button>
+            </div>
         </div>
 
-        <div id="viz-container"></div>
-
-        <div class="controls">
-            <div class="response-buttons" id="answers">
-                <button onclick="selectAnswer('A')">A</button>
-                <button onclick="selectAnswer('B')">B</button>
-                <button onclick="selectAnswer('C')">C</button>
-                <button onclick="selectAnswer('D')">D</button>
-            </div>
-
-            <div class="likert-container" id="likert">
-                <p>How difficult was this task?</p>
-                <div class="likert-scale">
-                    <label><input type="radio" name="difficulty" value="1"> 1 (Very Easy)</label>
-                    <label><input type="radio" name="difficulty" value="2"> 2</label>
-                    <label><input type="radio" name="difficulty" value="3"> 3</label>
-                    <label><input type="radio" name="difficulty" value="4"> 4</label>
-                    <label><input type="radio" name="difficulty" value="5"> 5 (Very Hard)</label>
+        <div id="screen-task" class="screen hidden" aria-live="polite">
+            <div id="experiment-container">
+                <div id="task-instructions"></div>
+                <div id="viz-container">
+                    <div id="viz-chart-wrap"></div>
                 </div>
-                <button style="margin-top: 15px;" onclick="submitTrial()">Submit & Next Trial</button>
+                <div class="controls">
+                    <div class="response-buttons" id="answers"></div>
+                    <div class="likert-container" id="likert">
+                        <p>How difficult was this task?</p>
+                        <div class="likert-scale">
+                            <label><input type="radio" name="difficulty" value="1"> 1 (Very easy)</label>
+                            <label><input type="radio" name="difficulty" value="2"> 2</label>
+                            <label><input type="radio" name="difficulty" value="3"> 3</label>
+                            <label><input type="radio" name="difficulty" value="4"> 4</label>
+                            <label><input type="radio" name="difficulty" value="5"> 5 (Very hard)</label>
+                        </div>
+                        <p class="field-error hidden" id="likert-error">Please select a difficulty rating.</p>
+                        <button type="button" class="btn-primary likert-next" id="btn-next-trial">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-thanks" class="screen hidden" aria-live="polite">
+            <div id="experiment-container">
+                <h1 class="study-title">Thank you</h1>
+                <p class="intro-copy">Your responses have been recorded. You may close this window.</p>
+                <p class="intro-copy muted hidden" id="submit-status"></p>
             </div>
         </div>
     </div>
 
-
+    <script type="module" src="script.js"></script>
 </body>
-
-<script src="script.js"></script>
 
 </html>

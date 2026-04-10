@@ -1,61 +1,198 @@
+* {
+  box-sizing: border-box;
+}
 
 body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    overflow: hidden; /* Prevents scrolling */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #f0f2f5;
+  overflow: hidden;
 }
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.screen.hidden {
+  display: none !important;
+}
+
 #experiment-container {
-    width: 800px;
-    max-width: 95vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: min(820px, 100%);
+  max-height: min(100vh - 24px, 900px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  padding: 20px 24px;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
+
+.study-title {
+  margin: 0 0 12px;
+  font-size: 1.35rem;
+  font-weight: 650;
+  text-align: center;
+}
+
+.intro-copy {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center;
+  max-width: 38rem;
+}
+
+.intro-copy.muted {
+  color: #5a5a5a;
+  font-size: 0.95rem;
+}
+
+.field-error {
+  color: #b00020;
+  font-size: 0.9rem;
+  margin: 8px 0 0;
+}
+
+.field-error.hidden {
+  display: none !important;
+}
+
+.btn-primary {
+  margin-top: 8px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: #1a56db;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1547b8;
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid #1a56db;
+  outline-offset: 2px;
+}
+
 #task-instructions {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    text-align: center;
+  font-size: 1.05rem;
+  margin-bottom: 12px;
+  text-align: center;
+  line-height: 1.45;
+  max-width: 40rem;
 }
+
+.sub-instruction {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: #444;
+  font-weight: 500;
+}
+
 #viz-container {
-    width: 500px;
-    height: 350px;
-    border: 1px solid #ccc;
-    margin-bottom: 20px;
+  width: min(500px, 92vw);
+  height: min(350px, 42vh);
+  min-height: 220px;
+  border: 1px solid #d8dde6;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  background: #fafbfc;
+  overflow: hidden;
 }
-/* Normal vs Obscured Conditions */
+
+#viz-chart-wrap {
+  width: 100%;
+  height: 100%;
+}
+
 .obscured-vision {
-    filter: blur(2px) brightness(0.8) contrast(0.7); 
+  filter: blur(2px) brightness(0.82) contrast(0.72);
 }
+
 .controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
 }
+
+.response-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.response-buttons.hidden {
+  display: none !important;
+}
+
 .response-buttons button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    font-size: 1rem;
-    cursor: pointer;
+  padding: 10px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 1px solid #c5cad3;
+  border-radius: 8px;
+  background: #fff;
 }
+
+.response-buttons button:hover {
+  background: #f3f5f8;
+}
+
 .likert-container {
-    margin-top: 20px;
-    text-align: center;
-    display: none; /* Hidden until answer is selected */
+  margin-top: 12px;
+  text-align: center;
+  width: 100%;
 }
+
+.likert-container.hidden {
+  display: none !important;
+}
+
 .likert-scale {
-    display: flex;
-    gap: 15px;
-    margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 14px;
+  margin-top: 10px;
+}
+
+.likert-scale label {
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.likert-next {
+  margin-top: 14px;
 }
