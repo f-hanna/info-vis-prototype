@@ -385,23 +385,30 @@ async function finishStudy() {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const ua = typeof navigator !== "undefined" ? navigator.userAgent : null;
 
-  const { error: sessionErr } = await supabase.from("study_sessions").insert({
-    id: sessionId,
-    participant_key: null,
-    user_agent: ua,
-    completed_at: null,
-  });
+  const { data: sessionRow, error: sessionErr } = await supabase
+    .from("study_sessions")
+    .insert({
+      id: sessionId,
+      participant_key: null,
+      user_agent: ua,
+      completed_at: null,
+    })
+    .select("user_number")
+    .single();
 
-  if (sessionErr) {
+  if (sessionErr || sessionRow == null || typeof sessionRow.user_number !== "number") {
     statusEl.textContent =
       "We could not save your session. If you are the researcher, check the database and config.";
     statusEl.classList.remove("hidden");
-    console.error(sessionErr);
+    console.error(sessionErr ?? new Error("Missing user_number after insert"));
     return;
   }
 
+  const userNumber = sessionRow.user_number;
+
   const trialPayload = completedRows.map((r) => ({
     session_id: sessionId,
+    user_number: userNumber,
     trial_index: r.trial_index,
     condition_id: r.condition_id,
     encoding: r.encoding,
