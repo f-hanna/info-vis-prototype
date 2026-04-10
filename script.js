@@ -375,6 +375,23 @@ async function finishStudy() {
   showScreen("thanks");
   const statusEl = document.getElementById("submit-status");
 
+  // #region agent log
+  const _dbg = (hypothesisId, location, message, data) => {
+    fetch("http://127.0.0.1:7398/ingest/4b8dde08-513d-4314-a6cf-99c94534d9e5", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "79fe00" },
+      body: JSON.stringify({
+        sessionId: "79fe00",
+        hypothesisId,
+        location,
+        message,
+        data,
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+  };
+  // #endregion
+
   if (!SUPABASE_ANON_KEY || !SUPABASE_URL) {
     statusEl.textContent =
       "Note: Supabase is not configured in config.js, so results were not uploaded.";
@@ -396,15 +413,34 @@ async function finishStudy() {
     .select("user_number")
     .single();
 
-  if (sessionErr || sessionRow == null || typeof sessionRow.user_number !== "number") {
+  const rawUserNumber = sessionRow?.user_number;
+  const userNumber =
+    typeof rawUserNumber === "number"
+      ? rawUserNumber
+      : typeof rawUserNumber === "string"
+        ? parseInt(rawUserNumber, 10)
+        : NaN;
+
+  // #region agent log
+  _dbg("H1", "script.js:finishStudy", "after session insert", {
+    completedRowsLen: completedRows.length,
+    sessionErrCode: sessionErr?.code ?? null,
+    sessionErrMessage: sessionErr?.message ?? null,
+    sessionRowKeys: sessionRow ? Object.keys(sessionRow) : null,
+    userNumberRaw: rawUserNumber,
+    userNumberType: sessionRow != null ? typeof rawUserNumber : null,
+    userNumberCoerced: userNumber,
+    coercedOk: Number.isFinite(userNumber),
+  });
+  // #endregion
+
+  if (sessionErr || sessionRow == null || !Number.isFinite(userNumber)) {
     statusEl.textContent =
       "We could not save your session. If you are the researcher, check the database and config.";
     statusEl.classList.remove("hidden");
     console.error(sessionErr ?? new Error("Missing user_number after insert"));
     return;
   }
-
-  const userNumber = sessionRow.user_number;
 
   const trialPayload = completedRows.map((r) => ({
     session_id: sessionId,
@@ -423,6 +459,17 @@ async function finishStudy() {
   }));
 
   const { error: trialsErr } = await supabase.from("study_trials").insert(trialPayload);
+
+  // #region agent log
+  _dbg("H2", "script.js:finishStudy", "after trials insert", {
+    trialPayloadLen: trialPayload.length,
+    trialKeysSample: trialPayload[0] ? Object.keys(trialPayload[0]) : [],
+    trialsErrCode: trialsErr?.code ?? null,
+    trialsErrMessage: trialsErr?.message ?? null,
+    trialsErrDetails: trialsErr?.details ?? null,
+    trialsErrHint: trialsErr?.hint ?? null,
+  });
+  // #endregion
 
   if (trialsErr) {
     statusEl.textContent =
